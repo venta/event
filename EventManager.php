@@ -2,12 +2,16 @@
 
 namespace Abava\Event;
 
-use Abava\Container\Container;
+use Abava\Container\Contract\Container;
 use Abava\Event\Contract\EventManager as EventManagerContract;
 use Ds\PriorityQueue as Queue;
 use Ds\Map;
 
-
+/**
+ * Class EventManager
+ *
+ * @package Abava\Event
+ */
 class EventManager implements EventManagerContract
 {
     /**
@@ -22,7 +26,7 @@ class EventManager implements EventManagerContract
 
 
     /**
-     * EventManager constructor.
+     * @inheritdoc
      */
     public function __construct(Container $container)
     {
@@ -33,7 +37,7 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function attach($eventName, $observerName, $callback, $priority = 0)
+    public function attach(string $eventName, string$observerName, $callback, int $priority = 0)
     {
         Event::validateName($eventName);
         $observer = new Observer($observerName, $callback, $priority);
@@ -43,10 +47,10 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function detach($eventName, $observerName)
+    public function detach(string $eventName, string $observerName)
     {
         $observer = $this->getObserver($eventName, $observerName);
-        if (null === $observer) {
+        if ($observer === null) {
             throw new \Exception(sprintf('Observer %s was not found in %s queue', $observerName, $eventName));
         }
         $this->getObservers($eventName)->remove($observerName);
@@ -57,7 +61,7 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function clearListeners($eventName)
+    public function clearListeners(string $eventName)
     {
         $this->getObservers($eventName)->clear();
     }
@@ -65,10 +69,10 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function trigger($eventName, array $argv = [])
+    public function trigger(string $eventName, array $argv = [])
     {
         $observers = $this->enqueueObservers($eventName);
-        $event = $this->prepareEventObject($eventName, $argv);
+        $event = new Event($eventName, $argv);
         $this->passToSubscribers($observers, $event);
     }
 
@@ -79,14 +83,12 @@ class EventManager implements EventManagerContract
      * @param Observer $observer
      * @throws \Exception
      */
-    protected function registerObserver($eventName, $observer)
+    protected function registerObserver(string $eventName, Observer $observer)
     {
         $observers = $this->getObservers($eventName);
-        if ($observers->hasKey($observer->getName())
-            && $observers->get($observer->getName())->isActive()
-        ) {
-            throw new \Exception(sprintf('Observer %s is already registered for %s event', $observers->getName(),
-                $eventName));
+        if ($observers->hasKey($observer->getName())) {
+            throw new \Exception(
+                sprintf('Observer %s is already registered for %s event', $observers->getName(), $eventName));
         }
         $observers->put($observer->getName(), $observer);
         $this->observers->put($eventName, $observers);
@@ -98,7 +100,7 @@ class EventManager implements EventManagerContract
      * @param string $eventName
      * @return Map
      */
-    protected function getObservers($eventName): Map
+    protected function getObservers(string $eventName): Map
     {
         if (!$this->observers->hasKey($eventName)) {
             return new Map();
@@ -114,7 +116,7 @@ class EventManager implements EventManagerContract
      * @param string $observerName
      * @return mixed|null
      */
-    protected function getObserver($eventName, $observerName)
+    protected function getObserver(string $eventName, string $observerName)
     {
         $eventObservers = $this->getObservers($eventName);
         if (($eventObservers->count() < 1) || !$eventObservers->hasKey($observerName)) {
@@ -125,28 +127,13 @@ class EventManager implements EventManagerContract
     }
 
     /**
-     * Assemble event object
-     *
-     * @param string $name
-     * @param array $args
-     * @return Event
-     */
-    protected function prepareEventObject($name, array $args)
-    {
-        $event = new Event();
-        $event->setName($name);
-        $event->setParams($args);
-
-        return $event;
-    }
-
-    /**
      * Enqueue all observers according to their priorities
      *
      * @param string $eventName
      * @return Queue
+     * @throws \InvalidArgumentException
      */
-    protected function enqueueObservers($eventName)
+    protected function enqueueObservers(string $eventName): Queue
     {
         $observers = $this->getObservers($eventName);
         if ($observers->count() < 1) {
@@ -166,7 +153,7 @@ class EventManager implements EventManagerContract
      * @param Map $observers
      * @param Event $event
      */
-    protected function passToSubscribers($observers, Event $event)
+    protected function passToObservers(Queue $observers, Event $event)
     {
         while ($observers->count() > 0) {
             $observer = $observers->pop();

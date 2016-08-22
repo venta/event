@@ -7,7 +7,7 @@ interface Observer
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return string|callable
@@ -20,9 +20,10 @@ interface Observer
     public function getPriority();
 
     /**
+     * @param string $name
      * @return void
      */
-    public function setName($name);
+    public function setName(string $name);
 
     /**
      * @param callable|string $callback
@@ -33,5 +34,5 @@ interface Observer
     /**
      * @param int $priority
      */
-    public function setPriority($priority);
+    public function setPriority(int $priority);
 }

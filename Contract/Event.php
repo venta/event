@@ -14,7 +14,7 @@ interface Event
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get parameters passed to the event
@@ -37,7 +37,7 @@ interface Event
      * @param  string $name
      * @return void
      */
-    public function setName($name);
+    public function setName(string $name);
 
     /**
      * Set event parameters

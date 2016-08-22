@@ -4,6 +4,11 @@ namespace Abava\Event;
 
 use Abava\Event\Contract\Event as EventContract;
 
+/**
+ * Class Event
+ *
+ * @package Abava\Event
+ */
 class Event implements EventContract
 {
     /**
@@ -22,9 +27,21 @@ class Event implements EventContract
     protected $propagationStopped = false;
 
     /**
+     * Event constructor.
+     *
+     * @param string $name
+     * @param array $params
+     */
+    public function __construct(string $name, array $params)
+    {
+        $this->setName($name);
+        $this->setParams($params);
+    }
+
+    /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -52,7 +69,7 @@ class Event implements EventContract
     /**
      * @inheritdoc
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         static::validateName($name);
         $this->name = $name;
@@ -87,7 +104,7 @@ class Event implements EventContract
      * @return bool
      * @throws \InvalidArgumentException
      */
-    public static function validateName($name)
+    public static function validateName(string $name)
     {
         if (!preg_match('/^[\w|\d|\.]*$/', $name)) {
             throw new \InvalidArgumentException('Event name must contain only [A-z], [0-9], "_", "."');

@@ -1,15 +1,14 @@
 <?php declare(strict_types = 1);
-/**
- * Created by PhpStorm.
- * User: iljalapkovskis
- * Date: 8/18/16
- * Time: 15:59
- */
 
 namespace Abava\Event;
 
 use Abava\Event\Contract\Observer as ObserverContract;
 
+/**
+ * Class Observer
+ *
+ * @package Abava\Event
+ */
 class Observer implements ObserverContract
 {
     /**
@@ -34,7 +33,7 @@ class Observer implements ObserverContract
      * @param string|callable $callback
      * @param int $priority
      */
-    public function __construct($name, $callback, $priority)
+    public function __construct(string $name, $callback, int $priority)
     {
         static::isNameValid($name);
         $this->name = $name;
@@ -45,7 +44,7 @@ class Observer implements ObserverContract
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -69,7 +68,7 @@ class Observer implements ObserverContract
     /**
      * @inheritdoc
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         static::isNameValid($name);
         $this->name = $name;
@@ -86,7 +85,7 @@ class Observer implements ObserverContract
     /**
      * @inheritdoc
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority)
     {
         $this->priority = $priority;
     }
@@ -96,7 +95,7 @@ class Observer implements ObserverContract
      * @return bool
      * @throws \InvalidArgumentException
      */
-    public static function isNameValid($name)
+    public static function isNameValid(string $name)
     {
         if (!preg_match('/^[\w|\d|\.]*$/', $name)) {
             throw new \InvalidArgumentException('Observer name must contain only [A-z], [0-9], "_", "."');

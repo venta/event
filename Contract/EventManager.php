@@ -2,8 +2,17 @@
 
 namespace Abava\Event\Contract;
 
+use Abava\Container\Contract\Container;
+
 interface EventManager
 {
+    /**
+     * EventManager constructor.
+     *
+     * @param \Abava\Container\Contract\Container $container
+     */
+    public function __construct(Container $container);
+
     /**
      * Attaches a listener to an event
      *
@@ -13,7 +22,7 @@ interface EventManager
      * @param int $prioritythe   priority at which the $callback executed
      * @return bool true on success false on failure
      */
-    public function attach($eventName, $observerName, $callback, $priority = 0);
+    public function attach(string $eventName, string $observerName, $callback, int $priority = 0);
 
     /**
      * Detaches a listener from an event
@@ -22,7 +31,7 @@ interface EventManager
      * @param string $observerName the observer name
      * @return bool true on success false on failure
      */
-    public function detach($eventName, $observerName);
+    public function detach(string $eventName, string $observerName);
 
     /**
      * Clear all listeners for a given event
@@ -30,7 +39,7 @@ interface EventManager
      * @param  string $event
      * @return void
      */
-    public function clearListeners($event);
+    public function clearListeners(string $event);
 
     /**
      * Trigger an event
@@ -39,5 +48,5 @@ interface EventManager
      * @param  array $argv
      * @return mixed
      */
-    public function trigger($eventName, array $argv = []);
+    public function trigger(string $eventName, array $argv = []);
 }
