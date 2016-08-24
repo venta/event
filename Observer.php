@@ -12,14 +12,14 @@ use Abava\Event\Contract\Observer as ObserverContract;
 class Observer implements ObserverContract
 {
     /**
-     * @var string $name
-     */
-    protected $name;
-
-    /**
      * @var string|callable $callback
      */
     protected $callback;
+
+    /**
+     * @var string $name
+     */
+    protected $name;
 
     /**
      * @var int $priority
@@ -42,11 +42,17 @@ class Observer implements ObserverContract
     }
 
     /**
-     * @inheritdoc
+     * @param string $name
+     * @return bool
+     * @throws \InvalidArgumentException
      */
-    public function getName(): string
+    public static function isNameValid(string $name)
     {
-        return $this->name;
+        if (!preg_match('/^[\w|\d|\.]*$/', $name)) {
+            throw new \InvalidArgumentException('Observer name must contain only [A-z], [0-9], "_", "."');
+        }
+
+        return true;
     }
 
     /**
@@ -60,9 +66,17 @@ class Observer implements ObserverContract
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function setCallback($callback)
     {
-        return $this->priority;
+        $this->callback = $callback;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**
@@ -77,9 +91,9 @@ class Observer implements ObserverContract
     /**
      * @inheritdoc
      */
-    public function setCallback($callback)
+    public function getPriority()
     {
-        $this->callback = $callback;
+        return $this->priority;
     }
 
     /**
@@ -88,19 +102,5 @@ class Observer implements ObserverContract
     public function setPriority(int $priority)
     {
         $this->priority = $priority;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     * @throws \InvalidArgumentException
-     */
-    public static function isNameValid(string $name)
-    {
-        if (!preg_match('/^[\w|\d|\.]*$/', $name)) {
-            throw new \InvalidArgumentException('Observer name must contain only [A-z], [0-9], "_", "."');
-        }
-
-        return true;
     }
 }

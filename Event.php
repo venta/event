@@ -39,6 +39,20 @@ class Event implements EventContract
     }
 
     /**
+     * @param string $name
+     * @return bool
+     * @throws \InvalidArgumentException
+     */
+    public static function validateName(string $name)
+    {
+        if (!preg_match('/^[\w|\d|\.]*$/', $name)) {
+            throw new \InvalidArgumentException('Event name must contain only [A-z], [0-9], "_", "."');
+        }
+
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getName(): string
@@ -49,9 +63,10 @@ class Event implements EventContract
     /**
      * @inheritdoc
      */
-    public function getParams()
+    public function setName(string $name)
     {
-        return $this->params;
+        static::validateName($name);
+        $this->name = $name;
     }
 
     /**
@@ -69,10 +84,9 @@ class Event implements EventContract
     /**
      * @inheritdoc
      */
-    public function setName(string $name)
+    public function getParams()
     {
-        static::validateName($name);
-        $this->name = $name;
+        return $this->params;
     }
 
     /**
@@ -86,30 +100,16 @@ class Event implements EventContract
     /**
      * @inheritdoc
      */
-    public function stopPropagation()
-    {
-        $this->propagationStopped = true;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function isPropagationStopped()
     {
         return $this->propagationStopped;
     }
 
     /**
-     * @param string $name
-     * @return bool
-     * @throws \InvalidArgumentException
+     * @inheritdoc
      */
-    public static function validateName(string $name)
+    public function stopPropagation()
     {
-        if (!preg_match('/^[\w|\d|\.]*$/', $name)) {
-            throw new \InvalidArgumentException('Event name must contain only [A-z], [0-9], "_", "."');
-        }
-
-        return true;
+        $this->propagationStopped = true;
     }
 }

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Abava\Event\Contract;
 
@@ -17,6 +17,14 @@ interface Event
     public function getName(): string;
 
     /**
+     * Get a single parameter by name
+     *
+     * @param  string $name
+     * @return array|null
+     */
+    public function getParam($name);
+
+    /**
      * Get parameters passed to the event
      *
      * @return array
@@ -24,12 +32,11 @@ interface Event
     public function getParams();
 
     /**
-     * Get a single parameter by name
+     * Has this event indicated event propagation should stop?
      *
-     * @param  string $name
-     * @return array|null
+     * @return bool
      */
-    public function getParam($name);
+    public function isPropagationStopped();
 
     /**
      * Set the event name
@@ -53,11 +60,4 @@ interface Event
      * @return void
      */
     public function stopPropagation();
-
-    /**
-     * Has this event indicated event propagation should stop?
-     *
-     * @return bool
-     */
-    public function isPropagationStopped();
 }

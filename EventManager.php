@@ -15,15 +15,14 @@ use Ds\Map;
 class EventManager implements EventManagerContract
 {
     /**
-     * @var Map
-     */
-    protected $observers;
-
-    /**
      * @var Container
      */
     protected $container;
 
+    /**
+     * @var Map
+     */
+    protected $observers;
 
     /**
      * @inheritdoc
@@ -37,11 +36,19 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function attach(string $eventName, string$observerName, $callback, int $priority = 0)
+    public function attach(string $eventName, string $observerName, $callback, int $priority = 0)
     {
         Event::validateName($eventName);
         $observer = new Observer($observerName, $callback, $priority);
         $this->registerObserver($eventName, $observer);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function clearListeners(string $eventName)
+    {
+        $this->getObservers($eventName)->clear();
     }
 
     /**
@@ -61,14 +68,6 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function clearListeners(string $eventName)
-    {
-        $this->getObservers($eventName)->clear();
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function trigger(string $eventName, array $argv = [])
     {
         $observers = $this->enqueueObservers($eventName);
@@ -77,53 +76,21 @@ class EventManager implements EventManagerContract
     }
 
     /**
-     * Handle observer registration for the event
+     * Call the observer callback
      *
-     * @param string $eventName
      * @param Observer $observer
-     * @throws \Exception
+     * @param Event $event
+     * @return mixed
      */
-    protected function registerObserver(string $eventName, Observer $observer)
+    protected function callObserver(Observer $observer, Event $event)
     {
-        $observers = $this->getObservers($eventName);
-        if ($observers->hasKey($observer->getName())) {
-            throw new \Exception(
-                sprintf('Observer %s is already registered for %s event', $observers->getName(), $eventName));
+        $callback = $observer->getCallback();
+        if (is_callable($callback)) {
+            return $callback($event);
         }
-        $observers->put($observer->getName(), $observer);
-        $this->observers->put($eventName, $observers);
-    }
-
-    /**
-     * Get observers attached to the event
-     *
-     * @param string $eventName
-     * @return Map
-     */
-    protected function getObservers(string $eventName): Map
-    {
-        if (!$this->observers->hasKey($eventName)) {
-            return new Map();
+        if (is_string($callback)) {
+            return $this->container->call($callback, ['event' => $event]);
         }
-
-        return $this->observers->get($eventName);
-    }
-
-    /**
-     * Get observer fot the event if exists, else null
-     *
-     * @param string $eventName
-     * @param string $observerName
-     * @return mixed|null
-     */
-    protected function getObserver(string $eventName, string $observerName)
-    {
-        $eventObservers = $this->getObservers($eventName);
-        if (($eventObservers->count() < 1) || !$eventObservers->hasKey($observerName)) {
-            return null;
-        }
-
-        return $eventObservers->get($observerName);
     }
 
     /**
@@ -148,6 +115,38 @@ class EventManager implements EventManagerContract
     }
 
     /**
+     * Get observer fot the event if exists, else null
+     *
+     * @param string $eventName
+     * @param string $observerName
+     * @return mixed|null
+     */
+    protected function getObserver(string $eventName, string $observerName)
+    {
+        $eventObservers = $this->getObservers($eventName);
+        if (($eventObservers->count() < 1) || !$eventObservers->hasKey($observerName)) {
+            return null;
+        }
+
+        return $eventObservers->get($observerName);
+    }
+
+    /**
+     * Get observers attached to the event
+     *
+     * @param string $eventName
+     * @return Map
+     */
+    protected function getObservers(string $eventName): Map
+    {
+        if (!$this->observers->hasKey($eventName)) {
+            return new Map();
+        }
+
+        return $this->observers->get($eventName);
+    }
+
+    /**
      * Send the Event to all subscribers according to priority
      *
      * @param Map $observers
@@ -165,21 +164,21 @@ class EventManager implements EventManagerContract
     }
 
     /**
-     * Call the observer callback
+     * Handle observer registration for the event
      *
+     * @param string $eventName
      * @param Observer $observer
-     * @param Event $event
-     * @return mixed
+     * @throws \Exception
      */
-    protected function callObserver(Observer $observer, Event $event)
+    protected function registerObserver(string $eventName, Observer $observer)
     {
-        $callback = $observer->getCallback();
-        if (is_callable($callback)) {
-            return $callback($event);
+        $observers = $this->getObservers($eventName);
+        if ($observers->hasKey($observer->getName())) {
+            throw new \Exception(
+                sprintf('Observer %s is already registered for %s event', $observers->getName(), $eventName));
         }
-        if (is_string($callback)) {
-            return $this->container->call($callback, ['event' => $event]);
-        }
+        $observers->put($observer->getName(), $observer);
+        $this->observers->put($eventName, $observers);
     }
 
 }
