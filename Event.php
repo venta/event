@@ -76,7 +76,7 @@ class Event implements EventContract
     /**
      * @inheritdoc
      */
-    public function getParameter($name)
+    public function getParameter(string $name)
     {
         if (!array_key_exists($name, $this->parameters)) {
             return null;

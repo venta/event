@@ -39,5 +39,5 @@ interface Observer
     /**
      * @param integer $priority
      */
-    public function setPriority($priority);
+    public function setPriority(int $priority);
 }

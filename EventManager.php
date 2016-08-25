@@ -27,7 +27,7 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function __construct($container)
+    public function __construct(Container $container)
     {
         $this->observers = new Map;
         $this->container = $container;
@@ -36,7 +36,7 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function attach(string $eventName, string $observerName, $callback, $priority = 0)
+    public function attach(string $eventName, string $observerName, $callback, int $priority = 0)
     {
         Event::validateName($eventName);
         $observer = new Observer($observerName, $callback, $priority);

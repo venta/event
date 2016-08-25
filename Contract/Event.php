@@ -22,7 +22,7 @@ interface Event
      * @param  string $name
      * @return array|null
      */
-    public function getParameter($name);
+    public function getParameter(string $name);
 
     /**
      * Get parameters passed to the event

@@ -18,7 +18,7 @@ interface EventManager
      * @param integer $priority  priority for the $callback
      * @return bool true on success false on failure
      */
-    public function attach(string $eventName, string $observerName, $callback, $priority = 0);
+    public function attach(string $eventName, string $observerName, $callback, int $priority = 0);
 
     /**
      * Clear all listeners for a given event
