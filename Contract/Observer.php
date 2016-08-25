@@ -2,6 +2,11 @@
 
 namespace Abava\Event\Contract;
 
+/**
+ * Interface Observer
+ *
+ * @package Abava\Event\Contract
+ */
 interface Observer
 {
     /**
@@ -15,7 +20,7 @@ interface Observer
     public function getName(): string;
 
     /**
-     * @return int
+     * @return integer
      */
     public function getPriority();
 
@@ -32,7 +37,7 @@ interface Observer
     public function setName(string $name);
 
     /**
-     * @param int $priority
+     * @param integer $priority
      */
-    public function setPriority(int $priority);
+    public function setPriority($priority);
 }

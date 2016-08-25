@@ -19,7 +19,7 @@ class Event implements EventContract
     /**
      * @var array
      */
-    protected $params = [];
+    protected $parameters = [];
 
     /**
      * @var bool
@@ -32,10 +32,11 @@ class Event implements EventContract
      * @param string $name
      * @param array $params
      */
-    public function __construct(string $name, array $params)
+    public function __construct(string $name, array $parameters = [])
     {
-        $this->setName($name);
-        $this->setParams($params);
+        static::validateName($name);
+        $this->name = $name;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -66,35 +67,45 @@ class Event implements EventContract
     public function setName(string $name)
     {
         static::validateName($name);
-        $this->name = $name;
+        $clone = clone $this;
+        $clone->name = $name;
+
+        return $clone;
     }
 
     /**
      * @inheritdoc
      */
-    public function getParam($name)
+    public function getParameter($name)
     {
-        if (!isset($name, $this->params)) {
+        if (!array_key_exists($name, $this->parameters)) {
             return null;
         }
 
-        return $this->params[$name];
+        return $this->parameters[$name];
     }
 
     /**
      * @inheritdoc
      */
-    public function getParams()
+    public function getParameters()
     {
-        return $this->params;
+        return $this->parameters;
     }
 
     /**
      * @inheritdoc
      */
-    public function setParams(array $params)
+    public function setParameters(array $parameters, bool $preserveExisting = false)
     {
-        $this->params = array_merge($this->params, $params);
+        $clone = clone $this;
+        if ($preserveExisting) {
+            $clone->parameters = array_merge($this->parameters, $parameters);
+        } else {
+            $clone->parameters = $parameters;
+        }
+
+        return $clone;
     }
 
     /**

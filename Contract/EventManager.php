@@ -2,8 +2,11 @@
 
 namespace Abava\Event\Contract;
 
-use Abava\Container\Contract\Container;
-
+/**
+ * Interface EventManager
+ *
+ * @package Abava\Event\Contract
+ */
 interface EventManager
 {
     /**
@@ -12,10 +15,10 @@ interface EventManager
      * @param string $eventName  the event to attach too
      * @param string $observerName
      * @param callable $callback a callable function
-     * @param int $prioritythe   priority at which the $callback executed
+     * @param integer $priority  priority for the $callback
      * @return bool true on success false on failure
      */
-    public function attach(string $eventName, string $observerName, $callback, int $priority = 0);
+    public function attach(string $eventName, string $observerName, $callback, $priority = 0);
 
     /**
      * Clear all listeners for a given event

@@ -22,14 +22,14 @@ interface Event
      * @param  string $name
      * @return array|null
      */
-    public function getParam($name);
+    public function getParameter($name);
 
     /**
      * Get parameters passed to the event
      *
      * @return array
      */
-    public function getParams();
+    public function getParameters();
 
     /**
      * Has this event indicated event propagation should stop?
@@ -49,10 +49,10 @@ interface Event
     /**
      * Set event parameters
      *
-     * @param  array $params
+     * @param  array $parameters
      * @return void
      */
-    public function setParams(array $params);
+    public function setParameters(array $parameters);
 
     /**
      * Indicate whether or not to stop propagating this event

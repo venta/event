@@ -1,11 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
 
 namespace Abava\Event;
 
 use Abava\Container\Contract\Container;
 use Abava\Event\Contract\EventManager as EventManagerContract;
-use Ds\PriorityQueue as Queue;
 use Ds\Map;
+use Ds\PriorityQueue;
 
 /**
  * Class EventManager
@@ -27,7 +27,7 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function __construct(Container $container)
+    public function __construct($container)
     {
         $this->observers = new Map;
         $this->container = $container;
@@ -36,7 +36,7 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function attach(string $eventName, string $observerName, $callback, int $priority = 0)
+    public function attach(string $eventName, string $observerName, $callback, $priority = 0)
     {
         Event::validateName($eventName);
         $observer = new Observer($observerName, $callback, $priority);
@@ -70,9 +70,11 @@ class EventManager implements EventManagerContract
      */
     public function trigger(string $eventName, array $argv = [])
     {
+        Event::validateName($eventName);
         $observers = $this->enqueueObservers($eventName);
         $event = new Event($eventName, $argv);
-        $this->passToSubscribers($observers, $event);
+
+        return $this->passToObservers($observers, $event);
     }
 
     /**
@@ -89,24 +91,27 @@ class EventManager implements EventManagerContract
             return $callback($event);
         }
         if (is_string($callback)) {
+            //TODO: replace Container::call with a proper method name after container refactoring is finished
             return $this->container->call($callback, ['event' => $event]);
         }
+
+        return false;
     }
 
     /**
      * Enqueue all observers according to their priorities
      *
      * @param string $eventName
-     * @return Queue
+     * @return PriorityQueue
      * @throws \InvalidArgumentException
      */
-    protected function enqueueObservers(string $eventName): Queue
+    protected function enqueueObservers(string $eventName): PriorityQueue
     {
         $observers = $this->getObservers($eventName);
         if ($observers->count() < 1) {
             throw new \InvalidArgumentException('Event name must be a registered event name');
         }
-        $queue = new Queue;
+        $queue = new PriorityQueue;
         foreach ($observers as $observer) {
             $queue->push($observer, $observer->getPriority());
         }
@@ -149,18 +154,21 @@ class EventManager implements EventManagerContract
     /**
      * Send the Event to all subscribers according to priority
      *
-     * @param Map $observers
+     * @param PriorityQueue $observers
      * @param Event $event
      */
-    protected function passToObservers(Queue $observers, Event $event)
+    protected function passToObservers(PriorityQueue $observers, Event $event)
     {
+        $return = null;
         while ($observers->count() > 0) {
             $observer = $observers->pop();
-            $this->callObserver($observer, $event);
+            $return = $this->callObserver($observer, $event);
             if ($event->isPropagationStopped()) {
-                break;
+                return $return;
             }
         }
+
+        return $return;
     }
 
     /**
@@ -180,5 +188,4 @@ class EventManager implements EventManagerContract
         $observers->put($observer->getName(), $observer);
         $this->observers->put($eventName, $observers);
     }
-
 }

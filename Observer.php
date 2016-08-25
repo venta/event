@@ -22,7 +22,7 @@ class Observer implements ObserverContract
     protected $name;
 
     /**
-     * @var int $priority
+     * @var integer $priority
      */
     protected $priority;
 
@@ -31,14 +31,14 @@ class Observer implements ObserverContract
      *
      * @param string $name
      * @param string|callable $callback
-     * @param int $priority
+     * @param integer $priority
      */
-    public function __construct(string $name, $callback, int $priority)
+    public function __construct(string $name, $callback, $priority)
     {
         static::isNameValid($name);
-        $this->name = $name;
-        $this->callback = $callback;
-        $this->priority = $priority;
+        $this->setName($name);
+        $this->setCallback($callback);
+        $this->setPriority($priority);
     }
 
     /**
@@ -99,7 +99,7 @@ class Observer implements ObserverContract
     /**
      * @inheritdoc
      */
-    public function setPriority(int $priority)
+    public function setPriority($priority)
     {
         $this->priority = $priority;
     }
