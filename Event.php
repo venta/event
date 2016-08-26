@@ -64,18 +64,6 @@ class Event implements EventContract
     /**
      * @inheritdoc
      */
-    public function setName(string $name)
-    {
-        static::validateName($name);
-        $clone = clone $this;
-        $clone->name = $name;
-
-        return $clone;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getParameter(string $name)
     {
         if (!array_key_exists($name, $this->parameters)) {
@@ -91,21 +79,6 @@ class Event implements EventContract
     public function getParameters()
     {
         return $this->parameters;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setParameters(array $parameters, bool $preserveExisting = false)
-    {
-        $clone = clone $this;
-        if ($preserveExisting) {
-            $clone->parameters = array_merge($this->parameters, $parameters);
-        } else {
-            $clone->parameters = $parameters;
-        }
-
-        return $clone;
     }
 
     /**

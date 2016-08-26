@@ -23,21 +23,4 @@ interface Observer
      * @return integer
      */
     public function getPriority();
-
-    /**
-     * @param callable|string $callback
-     * @return void
-     */
-    public function setCallback($callback);
-
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function setName(string $name);
-
-    /**
-     * @param integer $priority
-     */
-    public function setPriority(int $priority);
 }

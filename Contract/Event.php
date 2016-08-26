@@ -38,21 +38,6 @@ interface Event
      */
     public function isPropagationStopped();
 
-    /**
-     * Set the event name
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function setName(string $name);
-
-    /**
-     * Set event parameters
-     *
-     * @param  array $parameters
-     * @return void
-     */
-    public function setParameters(array $parameters);
 
     /**
      * Indicate whether or not to stop propagating this event

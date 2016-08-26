@@ -21,11 +21,11 @@ class EventTest extends TestCase
      */
     public function classCanBeInitiated()
     {
-        $event = $this->event;
+        $event = new \Abava\Event\Event($this->name, $this->parameters);
         $emptyEvent = new \Abava\Event\Event('empty.event');
 
-        $this->assertInstanceOf(\Abava\Event\Event::class, $event);
-        $this->assertInstanceOf(\Abava\Event\Event::class, $emptyEvent);
+        $this->assertInstanceOf(\Abava\Event\Contract\Event::class, $event);
+        $this->assertInstanceOf(\Abava\Event\Contract\Event::class, $emptyEvent);
     }
 
     /**
@@ -42,7 +42,8 @@ class EventTest extends TestCase
      */
     public function getAllParameters()
     {
-        $this->assertEquals($this->parameters, $this->event->getParameters());
+        $event = new \Abava\Event\Event($this->name, $this->parameters);
+        $this->assertEquals($this->parameters, $event->getParameters());
     }
 
     /**
@@ -50,45 +51,18 @@ class EventTest extends TestCase
      */
     public function getSeparateParameter()
     {
-        $this->assertEquals($this->parameters['key'], $this->event->getParameter('key'));
-        $this->assertNull($this->event->getParameter('nonExisting'));
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function nameIsValidatedInSetter()
-    {
-        $event = new \Abava\Event\Event('name');
-        $event->setName('new*name');
+        $event = new \Abava\Event\Event($this->name, $this->parameters);
+        $this->assertEquals($this->parameters['key'], $event->getParameter('key'));
+        $this->assertNull($event->getParameter('nonExisting'));
     }
 
     /**
      * @test
      */
-    public function nameSetterAndGetter()
+    public function nameGetter()
     {
         $event = new \Abava\Event\Event('name');
-        $newEventName = $event->setName('new.name');
-
         $this->assertEquals('name', $event->getName());
-        $this->assertEquals('new.name', $newEventName->getName());
-    }
-
-    /**
-     * @test
-     */
-    public function parametersCanBeSetOnExistingObject()
-    {
-        $eventWithNewParams = $this->event->setParameters(['other' => 'value']);
-        $eventPreserveExistingParams = $this->event->setParameters(
-            ['additional' => 'value'], true
-        );
-
-        $this->assertNotEquals($eventWithNewParams, $this->event);
-        $this->assertArrayHasKey('additional', $eventPreserveExistingParams->getParameters());
-        $this->assertArrayHasKey('key', $eventPreserveExistingParams->getParameters());
     }
 
     /**
@@ -96,7 +70,7 @@ class EventTest extends TestCase
      */
     public function propagationCanBeStopped()
     {
-        $event = $this->event;
+        $event = new \Abava\Event\Event($this->name);
         $event->stopPropagation();
         $this->assertEquals(true, $event->isPropagationStopped());
     }
@@ -107,13 +81,8 @@ class EventTest extends TestCase
 
     public function propagationStoppedDisabledByDefault()
     {
-        $event = $this->event;
+        $event = new \Abava\Event\Event($this->name);
         $this->assertClassHasAttribute('propagationStopped', \Abava\Event\Event::class);
         $this->assertEquals(false, $event->isPropagationStopped());
-    }
-
-    public function setUp()
-    {
-        $this->event = new Abava\Event\Event($this->name, $this->parameters);
     }
 }
