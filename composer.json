@@ -1,0 +1,37 @@
+{
+    "name": "abava/event",
+    "description": "The Abava Event package",
+    "authors": [
+        {
+            "name": "Konstantins Zukovs",
+            "email": "kz@scandiweb.com"
+        },
+        {
+            "name": "Alexey Rehov",
+            "email": "aleksejs@scandiweb.com"
+        },
+        {
+            "name": "Vsevolods Mihailovs",
+            "email": "vsevolods@scandiweb.com"
+        },
+        {
+            "name": "Ilja Lapkovskis",
+            "email": "ilja@scandiweb.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Abava\\Event\\": "/"
+        },
+        "exclude-from-classmap": [
+            "/tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
+    },
+    "require": {
+        "php-ds/php-ds": "^1.1"
+    }
+}
