@@ -12,10 +12,10 @@ interface EventManager
     /**
      * Attaches a listener to an event
      *
-     * @param string $eventName  the event to attach too
+     * @param string $eventName the event to attach too
      * @param string $observerName
      * @param callable $callback a callable function
-     * @param integer $priority  priority for the $callback
+     * @param integer $priority priority for the $callback
      * @return bool true on success false on failure
      */
     public function attach(string $eventName, string $observerName, callable $callback, int $priority = 0);
@@ -31,7 +31,7 @@ interface EventManager
     /**
      * Detaches a listener from an event
      *
-     * @param string $eventName    the event name
+     * @param string $eventName the event name
      * @param string $observerName the observer name
      * @return bool true on success false on failure
      */
