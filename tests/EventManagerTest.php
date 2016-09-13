@@ -231,11 +231,10 @@ class EventManagerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function throwsExceptionWhenTriggerNonRegisteredEvent()
     {
         $em = new \Abava\Event\EventManager($this->container);
-        $em->trigger('event');
+        $this->isNull($em->trigger('event'));
     }
 }

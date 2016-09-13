@@ -27,10 +27,9 @@ class EventManager implements EventManagerContract
     /**
      * @inheritdoc
      */
-    public function __construct(Container $container)
+    public function __construct()
     {
         $this->observers = new Map;
-        $this->container = $container;
     }
 
     /**
@@ -82,6 +81,9 @@ class EventManager implements EventManagerContract
     {
         Event::validateName($eventName);
         $observers = $this->enqueueObservers($eventName);
+        if ($observers === null) {
+            return;
+        }
         $event = new Event($eventName, $argv);
 
         return $this->passToObservers($observers, $event);
@@ -106,14 +108,14 @@ class EventManager implements EventManagerContract
      * Enqueue all observers according to their priorities
      *
      * @param string $eventName
-     * @return PriorityQueue
+     * @return PriorityQueue|null
      * @throws \InvalidArgumentException
      */
-    protected function enqueueObservers(string $eventName): PriorityQueue
+    protected function enqueueObservers(string $eventName)
     {
         $observers = $this->getEventObservers($eventName);
-        if ($observers->count() < 1) {
-            throw new \InvalidArgumentException('Event name must be a registered event name');
+        if ($observers->count() === 0) {
+            return null;
         }
         $queue = new PriorityQueue;
         foreach ($observers as $observer) {

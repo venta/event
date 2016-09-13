@@ -42,7 +42,7 @@ interface EventManager
      *
      * @param  string $event
      * @param  array $argv
-     * @return mixed
+     * @return mixed|void
      */
     public function trigger(string $eventName, array $argv = []);
 }
