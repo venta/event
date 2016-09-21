@@ -1,13 +1,13 @@
 <?php declare(strict_types = 1);
 
-namespace Abava\Event;
+namespace Venta\Event;
 
-use Abava\Event\Contract\Event as EventContract;
+use Venta\Event\Contract\Event as EventContract;
 
 /**
  * Class Event
  *
- * @package Abava\Event
+ * @package Venta\Event
  */
 class Event implements EventContract
 {

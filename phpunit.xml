@@ -9,7 +9,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="The Abava Event package tests">
+        <testsuite name="The Venta Event package tests">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>

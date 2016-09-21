@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Class Test
  *
- * @package Abava\Event
+ * @package Venta\Event
  */
 class ObserverTest extends TestCase
 {
@@ -14,10 +14,10 @@ class ObserverTest extends TestCase
      */
     public function constructorTest()
     {
-        $observer = new \Abava\Event\Observer('name', function () {
+        $observer = new \Venta\Event\Observer('name', function () {
         }, 0);
 
-        $this->assertInstanceOf(\Abava\Event\Contract\Observer::class, $observer);
+        $this->assertInstanceOf(\Venta\Event\Contract\Observer::class, $observer);
         $this->assertEquals('name', $observer->getName());
         $this->assertEquals(function () {
         }, $observer->getCallback());
@@ -30,7 +30,7 @@ class ObserverTest extends TestCase
      */
     public function throwsExceptionOnInvalidName()
     {
-        $observer = new \Abava\Event\Observer('name%invalid', function () {
+        $observer = new \Venta\Event\Observer('name%invalid', function () {
         }, 0);
     }
 }

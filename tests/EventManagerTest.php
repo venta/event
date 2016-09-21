@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 interface invokableCallback
 {
-    public function __invoke(\Abava\Event\Contract\Event $event);
+    public function __invoke(\Venta\Event\Contract\Event $event);
 }
 
 /**
@@ -14,8 +14,8 @@ class EventManagerTest extends TestCase
 {
     public function setUp()
     {
-        $this->container = new \Abava\Container\Container();
-        $this->em = new \Abava\Event\EventManager($this->container);
+        $this->container = new \Venta\Container\Container();
+        $this->em = new \Venta\Event\EventManager($this->container);
     }
 
     public function tearDown()
@@ -29,7 +29,7 @@ class EventManagerTest extends TestCase
      */
     public function attachThrowsWrongNameException()
     {
-        $em = new \Abava\Event\EventManager($this->container);
+        $em = new \Venta\Event\EventManager($this->container);
         $em->attach('invalid*1name', 'observer', function () {
         });
     }
@@ -39,7 +39,7 @@ class EventManagerTest extends TestCase
      */
     public function callbacksAreCalledDescPriority()
     {
-        $em = new \Abava\Event\EventManager($this->container);
+        $em = new \Venta\Event\EventManager($this->container);
         $em->attach('event', '3', function ($event) {
             echo "3";
         }, 3);
@@ -111,9 +111,9 @@ class EventManagerTest extends TestCase
      */
     public function constructorAcceptsContainer()
     {
-        $em = new \Abava\Event\EventManager($this->container);
+        $em = new \Venta\Event\EventManager($this->container);
 
-        $this->assertInstanceOf(\Abava\Event\Contract\EventManager::class, $em);
+        $this->assertInstanceOf(\Venta\Event\Contract\EventManager::class, $em);
         $this->classHasAttribute('observers');
     }
 
@@ -146,9 +146,9 @@ class EventManagerTest extends TestCase
     public function exitsWhenPropagationStopped()
     {
         $callback = Mockery::mock(invokableCallback::class);
-        $em = new \Abava\Event\EventManager($this->container);
+        $em = new \Venta\Event\EventManager($this->container);
         $em->attach('event', 'should.never.be.called', $callback, 1);
-        $em->attach('event', 'stop.propagation', function (\Abava\Event\Contract\Event $event) {
+        $em->attach('event', 'stop.propagation', function (\Venta\Event\Contract\Event $event) {
             $event->stopPropagation();
         }, 2);
         $callback->shouldReceive('__invoke')->never();
@@ -160,7 +160,7 @@ class EventManagerTest extends TestCase
      */
     public function negativePriorityAllowed()
     {
-        $em = new \Abava\Event\EventManager($this->container);
+        $em = new \Venta\Event\EventManager($this->container);
         $em->attach('event', '3', function ($event) {
             echo "3";
         }, -5);
@@ -234,7 +234,7 @@ class EventManagerTest extends TestCase
      */
     public function throwsExceptionWhenTriggerNonRegisteredEvent()
     {
-        $em = new \Abava\Event\EventManager($this->container);
+        $em = new \Venta\Event\EventManager($this->container);
         $this->isNull($em->trigger('event'));
     }
 }

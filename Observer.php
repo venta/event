@@ -1,13 +1,13 @@
 <?php declare(strict_types = 1);
 
-namespace Abava\Event;
+namespace Venta\Event;
 
-use Abava\Event\Contract\Observer as ObserverContract;
+use Venta\Event\Contract\Observer as ObserverContract;
 
 /**
  * Class Observer
  *
- * @package Abava\Event
+ * @package Venta\Event
  */
 class Observer implements ObserverContract
 {

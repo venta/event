@@ -1,11 +1,11 @@
 <?php declare(strict_types = 1);
 
-namespace Abava\Event\Contract;
+namespace Venta\Event\Contract;
 
 /**
  * Interface EventManager
  *
- * @package Abava\Event\Contract
+ * @package Venta\Event\Contracts
  */
 interface EventManager
 {

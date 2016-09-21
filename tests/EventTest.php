@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class EventTest extends TestCase
 {
     /**
-     * @var \Abava\Event\Event
+     * @var \Venta\Event\Event
      */
     private $event;
 
@@ -21,11 +21,11 @@ class EventTest extends TestCase
      */
     public function classCanBeInitiated()
     {
-        $event = new \Abava\Event\Event($this->name, $this->parameters);
-        $emptyEvent = new \Abava\Event\Event('empty.event');
+        $event = new \Venta\Event\Event($this->name, $this->parameters);
+        $emptyEvent = new \Venta\Event\Event('empty.event');
 
-        $this->assertInstanceOf(\Abava\Event\Contract\Event::class, $event);
-        $this->assertInstanceOf(\Abava\Event\Contract\Event::class, $emptyEvent);
+        $this->assertInstanceOf(\Venta\Event\Contract\Event::class, $event);
+        $this->assertInstanceOf(\Venta\Event\Contract\Event::class, $emptyEvent);
     }
 
     /**
@@ -34,7 +34,7 @@ class EventTest extends TestCase
      */
     public function constructorValidatesName()
     {
-        $event = new \Abava\Event\Event('incorrect$name');
+        $event = new \Venta\Event\Event('incorrect$name');
     }
 
     /**
@@ -42,7 +42,7 @@ class EventTest extends TestCase
      */
     public function getAllParameters()
     {
-        $event = new \Abava\Event\Event($this->name, $this->parameters);
+        $event = new \Venta\Event\Event($this->name, $this->parameters);
         $this->assertEquals($this->parameters, $event->getParameters());
     }
 
@@ -51,7 +51,7 @@ class EventTest extends TestCase
      */
     public function getSeparateParameter()
     {
-        $event = new \Abava\Event\Event($this->name, $this->parameters);
+        $event = new \Venta\Event\Event($this->name, $this->parameters);
         $this->assertEquals($this->parameters['key'], $event->getParameter('key'));
         $this->assertNull($event->getParameter('nonExisting'));
     }
@@ -61,7 +61,7 @@ class EventTest extends TestCase
      */
     public function nameGetter()
     {
-        $event = new \Abava\Event\Event('name');
+        $event = new \Venta\Event\Event('name');
         $this->assertEquals('name', $event->getName());
     }
 
@@ -70,7 +70,7 @@ class EventTest extends TestCase
      */
     public function propagationCanBeStopped()
     {
-        $event = new \Abava\Event\Event($this->name);
+        $event = new \Venta\Event\Event($this->name);
         $event->stopPropagation();
         $this->assertEquals(true, $event->isPropagationStopped());
     }
@@ -81,8 +81,8 @@ class EventTest extends TestCase
 
     public function propagationStoppedDisabledByDefault()
     {
-        $event = new \Abava\Event\Event($this->name);
-        $this->assertClassHasAttribute('propagationStopped', \Abava\Event\Event::class);
+        $event = new \Venta\Event\Event($this->name);
+        $this->assertClassHasAttribute('propagationStopped', \Venta\Event\Event::class);
         $this->assertEquals(false, $event->isPropagationStopped());
     }
 }

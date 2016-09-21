@@ -1,6 +1,6 @@
 {
-    "name": "abava/event",
-    "description": "The Abava Event package",
+    "name": "venta/event",
+    "description": "The Venta Event package",
     "authors": [
         {
             "name": "Konstantins Zukovs",
@@ -21,7 +21,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Abava\\Event\\": ""
+            "Venta\\Event\\": ""
         },
         "exclude-from-classmap": [
             "/tests/"
@@ -33,6 +33,7 @@
         "mockery/mockery": "^0.9.5"
     },
     "require": {
+        "php": "^7.0",
         "php-ds/php-ds": "^1.1"
     }
 }

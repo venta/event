@@ -1,16 +1,16 @@
 <?php declare(strict_types = 1);
 
-namespace Abava\Event;
+namespace Venta\Event;
 
-use Abava\Container\Contract\Container;
-use Abava\Event\Contract\EventManager as EventManagerContract;
+use Venta\Container\Contract\Container;
+use Venta\Event\Contract\EventManager as EventManagerContract;
 use Ds\Map;
 use Ds\PriorityQueue;
 
 /**
  * Class EventManager
  *
- * @package Abava\Event
+ * @package Venta\Event
  */
 class EventManager implements EventManagerContract
 {
