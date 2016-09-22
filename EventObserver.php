@@ -2,14 +2,14 @@
 
 namespace Venta\Event;
 
-use Venta\Event\Contract\Observer as ObserverContract;
+use Venta\Contracts\Event\EventObserver as EventObserverContract;
 
 /**
- * Class Observer
+ * Class EventObserver
  *
  * @package Venta\Event
  */
-class Observer implements ObserverContract
+class EventObserver implements EventObserverContract
 {
     /**
      * @var string|callable $callback

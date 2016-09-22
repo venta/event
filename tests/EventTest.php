@@ -24,8 +24,8 @@ class EventTest extends TestCase
         $event = new \Venta\Event\Event($this->name, $this->parameters);
         $emptyEvent = new \Venta\Event\Event('empty.event');
 
-        $this->assertInstanceOf(\Venta\Event\Contract\Event::class, $event);
-        $this->assertInstanceOf(\Venta\Event\Contract\Event::class, $emptyEvent);
+        $this->assertInstanceOf(\Venta\Contracts\Event\Event::class, $event);
+        $this->assertInstanceOf(\Venta\Contracts\Event\Event::class, $emptyEvent);
     }
 
     /**

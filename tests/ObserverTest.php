@@ -14,10 +14,10 @@ class ObserverTest extends TestCase
      */
     public function constructorTest()
     {
-        $observer = new \Venta\Event\Observer('name', function () {
+        $observer = new \Venta\Event\EventObserver('name', function () {
         }, 0);
 
-        $this->assertInstanceOf(\Venta\Event\Contract\Observer::class, $observer);
+        $this->assertInstanceOf(\Venta\Contracts\Event\EventObserver::class, $observer);
         $this->assertEquals('name', $observer->getName());
         $this->assertEquals(function () {
         }, $observer->getCallback());
@@ -30,7 +30,7 @@ class ObserverTest extends TestCase
      */
     public function throwsExceptionOnInvalidName()
     {
-        $observer = new \Venta\Event\Observer('name%invalid', function () {
+        $observer = new \Venta\Event\EventObserver('name%invalid', function () {
         }, 0);
     }
 }

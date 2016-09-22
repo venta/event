@@ -2,10 +2,10 @@
 
 namespace Venta\Event;
 
-use Venta\Container\Contract\Container;
-use Venta\Event\Contract\EventManager as EventManagerContract;
 use Ds\Map;
 use Ds\PriorityQueue;
+use Venta\Contracts\Container\Container;
+use Venta\Contracts\Event\EventManager as EventManagerContract;
 
 /**
  * Class EventManager
@@ -15,7 +15,7 @@ use Ds\PriorityQueue;
 class EventManager implements EventManagerContract
 {
     /**
-     * @var Container
+     * @var \Venta\Contracts\Container\Container
      */
     protected $container;
 
@@ -38,7 +38,7 @@ class EventManager implements EventManagerContract
     public function attach(string $eventName, string $observerName, callable $callback, int $priority = 0)
     {
         Event::validateName($eventName);
-        $observer = new Observer($observerName, $callback, $priority);
+        $observer = new EventObserver($observerName, $callback, $priority);
         $this->registerObserver($eventName, $observer);
     }
 
@@ -92,11 +92,11 @@ class EventManager implements EventManagerContract
     /**
      * Call the observer callback
      *
-     * @param Observer $observer
+     * @param EventObserver $observer
      * @param Event $event
      * @return mixed
      */
-    protected function callObserver(Observer $observer, Event $event)
+    protected function callObserver(EventObserver $observer, Event $event)
     {
         $callback = $observer->getCallback();
         //TODO: implement other call possibilities using container.
@@ -181,10 +181,10 @@ class EventManager implements EventManagerContract
      * Handle observer registration for the event
      *
      * @param string $eventName
-     * @param Observer $observer
+     * @param EventObserver $observer
      * @throws \Exception
      */
-    protected function registerObserver(string $eventName, Observer $observer)
+    protected function registerObserver(string $eventName, EventObserver $observer)
     {
         $observers = $this->getEventObservers($eventName);
         if ($observers->hasKey($observer->getName())) {

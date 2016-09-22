@@ -2,7 +2,7 @@
 
 namespace Venta\Event;
 
-use Venta\Event\Contract\Event as EventContract;
+use Venta\Contracts\Event\Event as EventContract;
 
 /**
  * Class Event

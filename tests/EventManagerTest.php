@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 interface invokableCallback
 {
-    public function __invoke(\Venta\Event\Contract\Event $event);
+    public function __invoke(\Venta\Contracts\Event\Event $event);
 }
 
 /**
@@ -113,7 +113,7 @@ class EventManagerTest extends TestCase
     {
         $em = new \Venta\Event\EventManager($this->container);
 
-        $this->assertInstanceOf(\Venta\Event\Contract\EventManager::class, $em);
+        $this->assertInstanceOf(\Venta\Contracts\Event\EventManager::class, $em);
         $this->classHasAttribute('observers');
     }
 
@@ -148,7 +148,7 @@ class EventManagerTest extends TestCase
         $callback = Mockery::mock(invokableCallback::class);
         $em = new \Venta\Event\EventManager($this->container);
         $em->attach('event', 'should.never.be.called', $callback, 1);
-        $em->attach('event', 'stop.propagation', function (\Venta\Event\Contract\Event $event) {
+        $em->attach('event', 'stop.propagation', function (\Venta\Contracts\Event\Event $event) {
             $event->stopPropagation();
         }, 2);
         $callback->shouldReceive('__invoke')->never();
