@@ -2,14 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-interface invokableCallback
-{
-    public function __invoke(\Venta\Contracts\Event\Event $event);
-}
-
-/**
- * Class EventManagerTest
- */
 class EventManagerTest extends TestCase
 {
     public function setUp()

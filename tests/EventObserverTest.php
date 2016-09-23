@@ -2,12 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class Test
- *
- * @package Venta\Event
- */
-class ObserverTest extends TestCase
+class EventObserverTest extends TestCase
 {
     /**
      * @test
