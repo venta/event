@@ -13,13 +13,15 @@
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
-    <whitelist>
-        <directory>./</directory>
-        <exclude>
-            <directory>./tests</directory>
-            <directory>./vendor</directory>
-        </exclude>
-    </whitelist>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory suffix=".php">./tests</directory>
+                <directory suffix=".php">./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
     <logging>
         <log type="coverage-html" target="./tests/coverage" charset="UTF-8" yui="true" highlight="true"/>
     </logging>

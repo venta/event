@@ -1,88 +1,46 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Venta\Event\Event;
 
 /**
- * Class ContainerTest
+ * Class EventTest
  */
 class EventTest extends TestCase
 {
     /**
-     * @var \Venta\Event\Event
-     */
-    private $event;
-
-    private $name = 'event';
-
-    private $parameters = ['key' => 'value'];
-
-    /**
      * @test
      */
-    public function classCanBeInitiated()
+    public function canGetData()
     {
-        $event = new \Venta\Event\Event($this->name, $this->parameters);
-        $emptyEvent = new \Venta\Event\Event('empty.event');
+        $event = new Event('event', ['foo' => 'bar', 'baz' => null]);
 
-        $this->assertInstanceOf(\Venta\Contracts\Event\Event::class, $event);
-        $this->assertInstanceOf(\Venta\Contracts\Event\Event::class, $emptyEvent);
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function constructorValidatesName()
-    {
-        $event = new \Venta\Event\Event('incorrect$name');
+        $this->assertEquals(['foo' => 'bar', 'baz' => null], $event->getData());
+        $this->assertEquals('bar', $event->getData('foo'));
+        $this->assertEquals('baz1', $event->getData('one', 'baz1'));
+        $this->assertNull($event->getData('baz'));
+        $this->assertNull($event->getData('foo1'));
     }
 
     /**
      * @test
      */
-    public function getAllParameters()
+    public function canGetName()
     {
-        $event = new \Venta\Event\Event($this->name, $this->parameters);
-        $this->assertEquals($this->parameters, $event->getParameters());
+        $event = new Event('event');
+
+        $this->assertEquals('event', $event->getName());
     }
 
     /**
      * @test
      */
-    public function getSeparateParameter()
+    public function canStopPropagation()
     {
-        $event = new \Venta\Event\Event($this->name, $this->parameters);
-        $this->assertEquals($this->parameters['key'], $event->getParameter('key'));
-        $this->assertNull($event->getParameter('nonExisting'));
-    }
+        $event = new Event('event');
+        $this->assertEquals(false, $event->isPropagationStopped());
 
-    /**
-     * @test
-     */
-    public function nameGetter()
-    {
-        $event = new \Venta\Event\Event('name');
-        $this->assertEquals('name', $event->getName());
-    }
-
-    /**
-     * @test
-     */
-    public function propagationCanBeStopped()
-    {
-        $event = new \Venta\Event\Event($this->name);
         $event->stopPropagation();
         $this->assertEquals(true, $event->isPropagationStopped());
-    }
-
-    /**
-     * @test
-     */
-
-    public function propagationStoppedDisabledByDefault()
-    {
-        $event = new \Venta\Event\Event($this->name);
-        $this->assertClassHasAttribute('propagationStopped', \Venta\Event\Event::class);
-        $this->assertEquals(false, $event->isPropagationStopped());
     }
 }
