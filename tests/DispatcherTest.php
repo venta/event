@@ -51,27 +51,6 @@ class DispatcherTest extends TestCase
     /**
      * @test
      */
-    public function canUseListenerResolver()
-    {
-        $dispatcher = $this->createDispatcher();
-        $class = new stdClass;
-        $dispatcher->setListenerResolver(function () {
-            return function (Event $event) {
-                $event->getData('class')->number = 'resolved';
-            };
-        });
-
-        $class->number = 1;
-        $dispatcher->attach('event', function () {
-        });
-
-        $dispatcher->trigger('event', ['class' => $class]);
-        $this->assertEquals('resolved', $class->number);
-    }
-
-    /**
-     * @test
-     */
     public function firesListenersByPriority()
     {
         $dispatcher = $this->createDispatcher();
@@ -91,16 +70,86 @@ class DispatcherTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function canStopEventPropagation()
+    {
+        $dispatcher = $this->createDispatcher();
+        $class = new stdClass;
+        $class->foo = 'bar';
+
+        $dispatcher->attach('event', function(Event $event) {
+            $event->stopPropagation();
+        });
+
+        $dispatcher->attach('event', function(Event $event) {
+            $event->getData('class')->foo = 'foo';
+        });
+
+        $dispatcher->trigger('event', ['class' => $class]);
+        $this->assertEquals('bar', $class->foo);
+    }
+
+    /**
+     * @test
+     */
+    public function ignoresCircularReference()
+    {
+        $dispatcher = $this->createDispatcher();
+        $class = new stdClass;
+        $class->number = '1';
+
+        $dispatcher->attach('event', function(Event $event) use ($dispatcher) {
+            $event->getData('class')->number .= '1';
+
+            $dispatcher->trigger('event', ['class' => $event->getData('class')]);
+        });
+
+        $dispatcher->attach('event', function(Event $event) {
+            $event->getData('class')->number .= '1';
+        });
+
+        $dispatcher->trigger('event', ['class' => $class]);
+        $this->assertEquals('111', $class->number);
+
+        $dispatcher->trigger('event', ['class' => $class]);
+        $this->assertEquals('11111', $class->number);
+    }
+
+    /**
+     * @test
+     */
+    public function wildcardListenersGoLast()
+    {
+        $dispatcher = $this->createDispatcher();
+        $class = new stdClass;
+        $class->number = 0;
+
+        $dispatcher->attach('event', function(Event $event) {
+            $event->getData('class')->number = 1;
+        });
+
+        $dispatcher->attach('*', function(Event $event) {
+            $event->getData('class')->number = 2;
+        });
+
+        $dispatcher->attach('event', function(Event $event) {
+            $event->getData('class')->number = 3;
+        });
+
+        $dispatcher->trigger('event', ['class' => $class]);
+        $this->assertEquals(2, $class->number);
+    }
+
+    /**
      * Creates dispatcher instance.
      *
      * @return Dispatcher|ListenerResolver|mixed
      */
     protected function createDispatcher()
     {
-        return new class extends Dispatcher implements ListenerResolver
+        return new class extends Dispatcher
         {
-            protected $resolver;
-
             public function testGetListeners(string $eventName, $sorted = true)
             {
                 if ($sorted === false) {
@@ -108,16 +157,6 @@ class DispatcherTest extends TestCase
                 }
 
                 return $this->getListeners($eventName);
-            }
-
-            public function setListenerResolver(callable $resolver)
-            {
-                $this->resolver = $resolver;
-            }
-
-            public function getListenerResolver()
-            {
-                return $this->resolver;
             }
         };
     }

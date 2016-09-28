@@ -2,8 +2,7 @@
 
 namespace Venta\Event;
 
-use Venta\Contracts\Event\Dispatcher as DispatcherContract;
-use Venta\Contracts\Event\ListenerResolver;
+use Venta\Contracts\Event\EventDispatcher as DispatcherContract;
 
 /**
  * Class Dispatcher
@@ -13,18 +12,18 @@ use Venta\Contracts\Event\ListenerResolver;
 class Dispatcher implements DispatcherContract
 {
     /**
+     * Array of events, being dispatched now.
+     *
+     * @var array
+     */
+    protected $dispatching = [];
+
+    /**
      * Array of wildcard listeners.
      *
      * @var array
      */
     protected $globalListeners = [];
-
-    /**
-     * Flag, defining if we are in dispatch process.
-     *
-     * @var bool
-     */
-    protected $isDispatching = false;
 
     /**
      * Array of defined events and it listeners.
@@ -47,9 +46,9 @@ class Dispatcher implements DispatcherContract
     {
         if ($eventName === '*') {
             $this->globalListeners[$priority][] = $listener;
+        } else {
+            $this->listeners[$eventName][$priority][] = $listener;
         }
-
-        $this->listeners[$eventName][$priority][] = $listener;
     }
 
     /**
@@ -71,22 +70,35 @@ class Dispatcher implements DispatcherContract
      */
     public function trigger(string $eventName, array $data = [])
     {
-        if (!$this->isDispatching) {
-            $this->isDispatching = true;
-            $listeners = $this->getListeners($eventName);
-            $event = new Event($eventName, $data);
-
-            foreach ($listeners as $index => $listener) {
-                $listener($event);
-
-                if ($event->isPropagationStopped()) {
-                    $this->isDispatching = false;
-                    break;
-                }
-            }
-
-            $this->isDispatching = false;
+        if (isset($this->dispatching[$eventName])) {
+            return;
         }
+
+        $this->dispatching[$eventName] = true;
+        $listeners = $this->getListeners($eventName);
+        $event = new Event($eventName, $data);
+
+        foreach ($listeners as $index => $listener) {
+            $this->callListener($listener, $event);
+
+            if ($event->isPropagationStopped()) {
+                unset($this->dispatching[$eventName]);
+                break;
+            }
+        }
+
+        unset($this->dispatching[$eventName]);
+    }
+
+    /**
+     * Performs call of the listener.
+     *
+     * @param callable $listener
+     * @param Event    $event
+     */
+    protected function callListener(callable $listener, Event $event)
+    {
+        $listener($event);
     }
 
     /**
@@ -97,28 +109,40 @@ class Dispatcher implements DispatcherContract
      */
     protected function getListeners(string $eventName): array
     {
-        if (isset($this->listeners[$eventName])) {
-            if (!isset($this->sortedListeners[$eventName])) {
-                $resolver = $this instanceof ListenerResolver ? $this->getListenerResolver() : null;
-                $mergedListeners = $this->listeners[$eventName] + $this->globalListeners;
-                ksort($mergedListeners);
-
-                foreach ($mergedListeners as $listeners) {
-                    foreach ($listeners as $listener) {
-                        if ($resolver !== null) {
-                            $listener = $resolver($listener);
-                        }
-
-                        if (is_callable($listener)) {
-                            $this->sortedListeners[$eventName][] = $listener;
-                        }
-                    }
-                }
-            }
-
-            return $this->sortedListeners[$eventName];
+        if (!isset($this->listeners[$eventName])) {
+            return [];
         }
 
-        return [];
+        if (!isset($this->sortedListeners[$eventName])) {
+            $this->sortedListeners[$eventName] = $this->mergeEventListeners($eventName);
+        }
+
+        return $this->sortedListeners[$eventName];
+    }
+
+    /**
+     * Merges all event listeners for particular event.
+     *
+     * @param  string $eventName
+     * @return array
+     */
+    protected function mergeEventListeners(string $eventName): array
+    {
+        $listeners = $this->listeners[$eventName];
+        $globalListeners = $this->globalListeners;
+        $normalised = [];
+
+        ksort($listeners);
+        ksort($globalListeners);
+
+        foreach ([$listeners, $globalListeners] as $storage) {
+            foreach ($storage as $listeners) {
+                foreach ($listeners as $listener) {
+                    $normalised[] = $listener;
+                }
+            }
+        }
+
+        return $normalised;
     }
 }
