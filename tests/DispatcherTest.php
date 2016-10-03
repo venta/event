@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Venta\Contracts\Event\ListenerResolver;
-use Venta\Event\Dispatcher;
+use Venta\Event\EventDispatcher;
 use Venta\Event\Event;
 
 /**
@@ -144,11 +144,11 @@ class DispatcherTest extends TestCase
     /**
      * Creates dispatcher instance.
      *
-     * @return Dispatcher|ListenerResolver|mixed
+     * @return EventDispatcher|ListenerResolver|mixed
      */
     protected function createDispatcher()
     {
-        return new class extends Dispatcher
+        return new class extends EventDispatcher
         {
             public function testGetListeners(string $eventName, $sorted = true)
             {

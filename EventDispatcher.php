@@ -2,14 +2,14 @@
 
 namespace Venta\Event;
 
-use Venta\Contracts\Event\EventDispatcher as DispatcherContract;
+use Venta\Contracts\Event\EventDispatcher as EventDispatcherContract;
 
 /**
- * Class Dispatcher
+ * Class EventDispatcher
  *
  * @package Venta\Event
  */
-class Dispatcher implements DispatcherContract
+class EventDispatcher implements EventDispatcherContract
 {
     /**
      * Array of events, being dispatched now.
