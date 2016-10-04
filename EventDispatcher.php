@@ -2,6 +2,7 @@
 
 namespace Venta\Event;
 
+use Venta\Contracts\Event\Event as EventContract;
 use Venta\Contracts\Event\EventDispatcher as EventDispatcherContract;
 
 /**
@@ -68,6 +69,14 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * @inheritDoc
      */
+    public function createEvent(string $eventName, array $data = []): EventContract
+    {
+        return new Event($eventName, $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function trigger(string $eventName, array $data = [])
     {
         if (isset($this->dispatching[$eventName])) {
@@ -76,7 +85,7 @@ class EventDispatcher implements EventDispatcherContract
 
         $this->dispatching[$eventName] = true;
         $listeners = $this->getListeners($eventName);
-        $event = new Event($eventName, $data);
+        $event = $this->createEvent($eventName, $data);
 
         foreach ($listeners as $index => $listener) {
             $this->callListener($listener, $event);
@@ -93,10 +102,10 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * Performs call of the listener.
      *
-     * @param callable $listener
-     * @param Event    $event
+     * @param callable      $listener
+     * @param EventContract $event
      */
-    protected function callListener(callable $listener, Event $event)
+    protected function callListener(callable $listener, EventContract $event)
     {
         $listener($event);
     }
