@@ -4,6 +4,8 @@ namespace Venta\Event;
 
 use Venta\Contracts\Event\Event as EventContract;
 use Venta\Contracts\Event\EventDispatcher as EventDispatcherContract;
+use Venta\Contracts\Event\EventFactory as EventFactoryContract;
+use Venta\Event\EventFactory;
 
 /**
  * Class EventDispatcher
@@ -18,6 +20,13 @@ class EventDispatcher implements EventDispatcherContract
      * @var array
      */
     protected $dispatching = [];
+
+    /**
+     * Event factory holder.
+     *
+     * @var EventFactoryContract
+     */
+    protected $eventFactory;
 
     /**
      * Array of wildcard listeners.
@@ -39,6 +48,16 @@ class EventDispatcher implements EventDispatcherContract
      * @var array
      */
     protected $sortedListeners = [];
+
+    /**
+     * Construct function.
+     *
+     * @param EventFactoryContract|null $factory
+     */
+    public function __construct(EventFactoryContract $factory = null)
+    {
+        $this->eventFactory = $factory ?? new EventFactory;
+    }
 
     /**
      * @inheritDoc
@@ -69,14 +88,6 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * @inheritDoc
      */
-    public function createEvent(string $eventName, array $data = []): EventContract
-    {
-        return new Event($eventName, $data);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function trigger(string $eventName, array $data = [])
     {
         if (isset($this->dispatching[$eventName])) {
@@ -85,7 +96,7 @@ class EventDispatcher implements EventDispatcherContract
 
         $this->dispatching[$eventName] = true;
         $listeners = $this->getListeners($eventName);
-        $event = $this->createEvent($eventName, $data);
+        $event = $this->eventFactory->create($eventName, $data);
 
         foreach ($listeners as $index => $listener) {
             $this->callListener($listener, $event);
