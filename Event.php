@@ -9,56 +9,14 @@ use Venta\Contracts\Event\Event as EventContract;
  *
  * @package Venta\Event
  */
-class Event implements EventContract
+abstract class Event implements EventContract
 {
-    /**
-     * Array of event data.
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * Event name.
-     *
-     * @var string
-     */
-    protected $name;
-
     /**
      * Propagation stop flag
      *
      * @var bool
      */
-    private $propagationStop = false;
-
-    /**
-     * Construct function.
-     *
-     * @param string $name
-     * @param array  $data
-     */
-    public function __construct(string $name, array $data = [])
-    {
-        $this->name = $name;
-        $this->data = $data;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getData($key = null, $default = null)
-    {
-        return $key === null ? $this->data : (isset($this->data[$key]) ? $this->data[$key] : $default);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
+    protected $propagationStop = false;
 
     /**
      * @inheritDoc

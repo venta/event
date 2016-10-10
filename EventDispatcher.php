@@ -4,8 +4,7 @@ namespace Venta\Event;
 
 use Venta\Contracts\Event\Event as EventContract;
 use Venta\Contracts\Event\EventDispatcher as EventDispatcherContract;
-use Venta\Contracts\Event\EventFactory as EventFactoryContract;
-use Venta\Event\EventFactory;
+use Venta\Contracts\Event\EventSubscriber;
 
 /**
  * Class EventDispatcher
@@ -20,13 +19,6 @@ class EventDispatcher implements EventDispatcherContract
      * @var array
      */
     protected $dispatching = [];
-
-    /**
-     * Event factory holder.
-     *
-     * @var EventFactoryContract
-     */
-    protected $eventFactory;
 
     /**
      * Array of wildcard listeners.
@@ -48,16 +40,6 @@ class EventDispatcher implements EventDispatcherContract
      * @var array
      */
     protected $sortedListeners = [];
-
-    /**
-     * Construct function.
-     *
-     * @param EventFactoryContract|null $factory
-     */
-    public function __construct(EventFactoryContract $factory = null)
-    {
-        $this->eventFactory = $factory ?? new EventFactory;
-    }
 
     /**
      * @inheritDoc
@@ -88,26 +70,47 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * @inheritDoc
      */
-    public function trigger(string $eventName, array $data = [])
+    public function subscribe(EventSubscriber $subscriber)
     {
-        if (isset($this->dispatching[$eventName])) {
+        foreach ($subscriber->getSubscriptions() as $eventName => $subscriptions) {
+            if (is_string($subscriptions)) {
+                $subscriptions = [[$subscriptions]];
+            }
+
+            if (is_array($subscriptions) && is_string(reset($subscriptions))) {
+                $subscriptions = [$subscriptions];
+            }
+
+            if (is_array($subscriptions)) {
+                foreach ($subscriptions as $subscription) {
+                    $priority = isset($subscription[1]) ? $subscription[1] : 0;
+                    $this->attach($eventName, [$subscriber, $subscription[0]], $priority);
+                }
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function trigger(EventContract $event)
+    {
+        if (isset($this->dispatching[$this->getEventName($event)])) {
             return;
         }
 
-        $this->dispatching[$eventName] = true;
-        $listeners = $this->getListeners($eventName);
-        $event = $this->eventFactory->create($eventName, $data);
+        $this->dispatching[$this->getEventName($event)] = true;
+        $listeners = $this->getListeners($this->getEventName($event));
 
         foreach ($listeners as $index => $listener) {
             $this->callListener($listener, $event);
 
             if ($event->isPropagationStopped()) {
-                unset($this->dispatching[$eventName]);
                 break;
             }
         }
 
-        unset($this->dispatching[$eventName]);
+        unset($this->dispatching[$this->getEventName($event)]);
     }
 
     /**
@@ -164,5 +167,16 @@ class EventDispatcher implements EventDispatcherContract
         }
 
         return $normalised;
+    }
+
+    /**
+     * Returns event name.
+     *
+     * @param  EventContract $event
+     * @return string
+     */
+    private function getEventName(EventContract $event)
+    {
+        return ltrim(get_class($event), '\\');
     }
 }
