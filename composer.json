@@ -21,11 +21,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "Venta\\Event\\": ""
-        },
-        "exclude-from-classmap": [
-            "/tests/"
-        ]
+            "Venta\\Event\\": "src/"
+        }
     },
     "minimum-stability": "dev",
     "require-dev": {
