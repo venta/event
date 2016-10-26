@@ -4,7 +4,7 @@ namespace Venta\Event;
 
 use Venta\Contracts\Event\Event as EventContract;
 use Venta\Contracts\Event\EventDispatcher as EventDispatcherContract;
-use Venta\Contracts\Event\EventSubscriber;
+use Venta\Event\Exception\InvalidListenerException;
 
 /**
  * Class EventDispatcher
@@ -19,13 +19,6 @@ class EventDispatcher implements EventDispatcherContract
      * @var array
      */
     protected $dispatching = [];
-
-    /**
-     * Array of wildcard listeners.
-     *
-     * @var array
-     */
-    protected $globalListeners = [];
 
     /**
      * Array of defined events and it listeners.
@@ -44,56 +37,19 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * @inheritDoc
      */
-    public function attach(string $eventName, callable $listener, int $priority = 0)
+    public function addListener(string $eventName, $listener, int $priority = 0)
     {
-        if ($eventName === '*') {
-            $this->globalListeners[$priority][] = $listener;
-        } else {
-            $this->listeners[$eventName][$priority][] = $listener;
+        if (!$this->canBeCalled($listener)) {
+            throw new InvalidListenerException($listener);
         }
+
+        $this->listeners[$eventName][$priority][] = $listener;
     }
 
     /**
      * @inheritDoc
      */
-    public function clearListeners(string $eventName)
-    {
-        if (isset($this->listeners[$eventName])) {
-            unset($this->listeners[$eventName]);
-        }
-
-        if (isset($this->sortedListeners[$eventName])) {
-            unset($this->sortedListeners[$eventName]);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function subscribe(EventSubscriber $subscriber)
-    {
-        foreach ($subscriber->getSubscriptions() as $eventName => $subscriptions) {
-            if (is_string($subscriptions)) {
-                $subscriptions = [[$subscriptions]];
-            }
-
-            if (is_array($subscriptions) && is_string(reset($subscriptions))) {
-                $subscriptions = [$subscriptions];
-            }
-
-            if (is_array($subscriptions)) {
-                foreach ($subscriptions as $subscription) {
-                    $priority = isset($subscription[1]) ? $subscription[1] : 0;
-                    $this->attach($eventName, [$subscriber, $subscription[0]], $priority);
-                }
-            }
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function trigger(EventContract $event)
+    public function dispatch(EventContract $event)
     {
         if (isset($this->dispatching[$this->getEventName($event)])) {
             return;
@@ -116,12 +72,23 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * Performs call of the listener.
      *
-     * @param callable      $listener
+     * @param mixed         $listener
      * @param EventContract $event
      */
-    protected function callListener(callable $listener, EventContract $event)
+    protected function callListener($listener, EventContract $event)
     {
         $listener($event);
+    }
+
+    /**
+     * Defines, if listener can be called.
+     *
+     * @param  mixed $listener
+     * @return bool
+     */
+    protected function canBeCalled($listener): bool
+    {
+        return is_callable($listener);
     }
 
     /**
@@ -137,7 +104,7 @@ class EventDispatcher implements EventDispatcherContract
         }
 
         if (!isset($this->sortedListeners[$eventName])) {
-            $this->sortedListeners[$eventName] = $this->mergeEventListeners($eventName);
+            $this->sortedListeners[$eventName] = $this->sortEventListeners($eventName);
         }
 
         return $this->sortedListeners[$eventName];
@@ -149,20 +116,16 @@ class EventDispatcher implements EventDispatcherContract
      * @param  string $eventName
      * @return array
      */
-    protected function mergeEventListeners(string $eventName): array
+    protected function sortEventListeners(string $eventName): array
     {
         $listeners = $this->listeners[$eventName];
-        $globalListeners = $this->globalListeners;
         $normalised = [];
 
         ksort($listeners);
-        ksort($globalListeners);
 
-        foreach ([$listeners, $globalListeners] as $storage) {
-            foreach ($storage as $listeners) {
-                foreach ($listeners as $listener) {
-                    $normalised[] = $listener;
-                }
+        foreach ($listeners as $priorityListeners) {
+            foreach ($priorityListeners as $listener) {
+                $normalised[] = $listener;
             }
         }
 
