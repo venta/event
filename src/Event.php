@@ -21,16 +21,16 @@ abstract class Event implements EventContract
     /**
      * @inheritDoc
      */
-    public function stopPropagation()
+    public function isPropagationStopped(): bool
     {
-        $this->propagationStop = true;
+        return $this->propagationStop;
     }
 
     /**
      * @inheritDoc
      */
-    public function isPropagationStopped(): bool
+    public function stopPropagation()
     {
-        return $this->propagationStop;
+        $this->propagationStop = true;
     }
 }
