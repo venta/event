@@ -15,22 +15,16 @@ class InvalidListenerException extends InvalidArgumentException
     /**
      * Construct function.
      *
-     * @param                $listener
+     * @param $listener
      * @param Throwable|null $previous
      */
     public function __construct($listener, Throwable $previous = null)
     {
-        parent::__construct($this->createMessage($listener), 0, $previous);
+        parent::__construct(
+            sprintf('Callable expected, got %s', is_object($listener) ? get_class($listener) : gettype($listener)),
+            0,
+            $previous
+        );
     }
 
-    /**
-     * Returns error message.
-     *
-     * @param  mixed $listener
-     * @return string
-     */
-    protected function createMessage($listener)
-    {
-        return sprintf('Invalid listener type. Callable expected, got %s', $listener);
-    }
 }

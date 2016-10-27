@@ -36,6 +36,7 @@ class EventDispatcher implements EventDispatcherContract
 
     /**
      * @inheritDoc
+     * @throws InvalidListenerException
      */
     public function addListener(string $eventName, $listener, int $priority = 0)
     {
@@ -44,6 +45,7 @@ class EventDispatcher implements EventDispatcherContract
         }
 
         $this->listeners[$eventName][$priority][] = $listener;
+        unset($this->sortedListeners[$eventName]);
     }
 
     /**
@@ -72,7 +74,7 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * Performs call of the listener.
      *
-     * @param mixed         $listener
+     * @param mixed $listener
      * @param EventContract $event
      */
     protected function callListener($listener, EventContract $event)
