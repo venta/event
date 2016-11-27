@@ -21,7 +21,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Venta\\Event\\": "src/"
+            "Venta\\Event\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "stub\\Venta\\Event\\": "stub"
         }
     },
     "minimum-stability": "dev",

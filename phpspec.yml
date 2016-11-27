@@ -1,0 +1,4 @@
+suites:
+    event_suite:
+        namespace: Venta\Event
+        psr4_prefix: Venta\Event

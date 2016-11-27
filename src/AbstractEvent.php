@@ -5,14 +5,14 @@ namespace Venta\Event;
 use Venta\Contracts\Event\Event as EventContract;
 
 /**
- * Class Event
+ * Class AbstractEvent
  *
  * @package Venta\Event
  */
-abstract class Event implements EventContract
+abstract class AbstractEvent implements EventContract
 {
     /**
-     * Propagation stop flag
+     * Propagation stop flag.
      *
      * @var bool
      */

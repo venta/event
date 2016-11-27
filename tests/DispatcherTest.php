@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Venta\Event\Event;
+use Venta\Event\AbstractEvent;
 
 /**
  * Class DispatcherTest
@@ -66,7 +66,7 @@ class DispatcherTest extends TestCase
      */
     protected function createEvent()
     {
-        return new class extends Event
+        return new class extends AbstractEvent
         {
             protected $data;
 

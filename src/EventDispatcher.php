@@ -2,7 +2,7 @@
 
 namespace Venta\Event;
 
-use Venta\Contracts\Event\Event as EventContract;
+use Venta\Contracts\Event\Event;
 use Venta\Contracts\Event\EventDispatcher as EventDispatcherContract;
 use Venta\Event\Exception\InvalidListenerException;
 
@@ -51,7 +51,7 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * @inheritDoc
      */
-    public function dispatch(EventContract $event)
+    public function dispatch(Event $event)
     {
         if (isset($this->dispatching[$this->getEventName($event)])) {
             return;
@@ -75,9 +75,9 @@ class EventDispatcher implements EventDispatcherContract
      * Performs call of the listener.
      *
      * @param mixed $listener
-     * @param EventContract $event
+     * @param Event $event
      */
-    protected function callListener($listener, EventContract $event)
+    protected function callListener($listener, Event $event)
     {
         $listener($event);
     }
@@ -137,10 +137,10 @@ class EventDispatcher implements EventDispatcherContract
     /**
      * Returns event name.
      *
-     * @param  EventContract $event
+     * @param  Event $event
      * @return string
      */
-    private function getEventName(EventContract $event)
+    private function getEventName(Event $event)
     {
         return ltrim(get_class($event), '\\');
     }
