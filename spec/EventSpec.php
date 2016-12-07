@@ -20,8 +20,8 @@ class EventSpec extends ObjectBehavior
 
     function it_propagation_can_be_stopped()
     {
-        $this->isPropagationStopped()->shouldBe(false);
+        $this->shouldNotBePropagationStopped();
         $this->stopPropagation();
-        $this->isPropagationStopped()->shouldBe(true);
+        $this->shouldBePropagationStopped();
     }
 }
