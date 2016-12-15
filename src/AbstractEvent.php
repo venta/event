@@ -16,7 +16,7 @@ abstract class AbstractEvent implements EventContract
      *
      * @var bool
      */
-    protected $propagationStop = false;
+    private $propagationStop = false;
 
     /**
      * @inheritDoc

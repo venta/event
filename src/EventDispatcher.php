@@ -18,21 +18,21 @@ class EventDispatcher implements EventDispatcherContract
      *
      * @var array
      */
-    protected $dispatching = [];
+    private $dispatching = [];
 
     /**
      * Array of defined events and it listeners.
      *
      * @var array
      */
-    protected $listeners = [];
+    private $listeners = [];
 
     /**
      * Sorted listeners array cache.
      *
      * @var array
      */
-    protected $sortedListeners = [];
+    private $sortedListeners = [];
 
     /**
      * @inheritDoc
