@@ -19,7 +19,7 @@
     "require": {
         "php": "^7.0",
         "venta/contracts": "dev-master",
-        "php-ds/php-ds": "^1.1",
+        "php-ds/php-ds": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.4",
