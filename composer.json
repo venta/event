@@ -1,11 +1,8 @@
 {
     "name": "venta/event",
     "description": "The Venta Event package.",
-    "keywords": [
-        "venta",
-        "events",
-        "dispatcher"
-    ],
+    "keywords": ["venta", "events", "dispatcher"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Venta Core Team",
